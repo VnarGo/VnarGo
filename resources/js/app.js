@@ -8,8 +8,13 @@ import Hello from './views/Hello'
 import Home from './views/Home'
 import Cart from './views/Cart'
 import ProductReview from './views/ProductReview'
+import ProductTabs from './views/ProductTabs'
 
 Vue.component('product-review',ProductReview)
+Vue.component('cart',Cart)
+Vue.component('product-tabs',ProductTabs)
+
+export const bus = new Vue();
 
 const router = new VueRouter({
     mode: 'history',
@@ -29,10 +34,10 @@ const router = new VueRouter({
 
 const app = new Vue({
     el: '#app',
-    components: { App,Cart,ProductReview },
+    components: { App,Cart,ProductReview, ProductTabs },
     router,
     data: {
-        premium: false,
+        premium: true,
     }
 });
 

@@ -31,6 +31,7 @@
 </template>
 
 <script>
+	import { bus } from '../app.js'
 	export default {
 		name: 'product-review',
 		data: function() {
@@ -47,7 +48,7 @@
 					rating: this.rating,
 					review: this.review
 				}
-				this.$emit('review-submitted', productReview)
+				bus.$emit('review-submitted', productReview)
 				this.name = null
 				this.rating = null
 				this.review = null

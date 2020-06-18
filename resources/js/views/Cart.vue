@@ -6,6 +6,8 @@
 
 <script>
 
+    import { bus } from '../app.js'
+
     export default {
     	name: 'cart',
     	data: function(){
@@ -14,10 +16,17 @@
     		}
     	},
     	methods:{
-    		updateCart(){
+    		updateCart_plus(){
     			this.cart += 1
-    		}
-    	}
+    		},
+            updateCart_minus(){
+                this.cart -= 1
+            }
+    	},
+        created(){
+            bus.$on('add-to-cart',this.updateCart_plus),
+            bus.$on('remove-from-cart',this.updateCart_minus)
+        }
     }
 </script>
 

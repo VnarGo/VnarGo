@@ -11,7 +11,7 @@
 	<div class="nav-bar"></div>
 
 	<div id="app">
-        <cart></cart>
+        
     	<app :premium="premium"></app>
     	
     </div>
@@ -42,3 +42,5 @@
 
 </style>
 
+ 
+        	

@@ -1,53 +1,46 @@
 <template>
-    <div class="product">
-        <div class="product-image">
-            <img v-bind:src="image">
-        </div>   
-        <div class="product-info">
-            <h1>{{ title }}</h1>
-            <p v-if="inStock">In Stock</p>
-            <p v-else-if="inStock > 0 && inStock < 10">Almost Sold Out</p>
-            <p v-else :class="{soldOut:!inStock}">Out of Stock</p>
-            <p>Shipping: {{ shipping }}</p>
+    <div>
+        <cart @add-to-cart="addToCart" @remove-from-cart="removeFromCart"></cart>
+        <div class="product">
+            <div class="product-image">
+                <img v-bind:src="image">
+            </div>   
+            <div class="product-info">
+                <h1>{{ title }}</h1>
+                <p v-if="inStock">In Stock</p>
+                <p v-else-if="inStock > 0 && inStock < 10">Almost Sold Out</p>
+                <p v-else :class="{soldOut:!inStock}">Out of Stock</p>
+                <p>Shipping: {{ shipping }}</p>
 
-            <ul>
-                <li v-for="detail in details" >{{ detail }}</li>
-            </ul>
+                <ul>
+                    <li v-for="detail in details" >{{ detail }}</li>
+                </ul>
 
-            <div v-for="(variant, index) in variants" 
-                 :key="variant.variantId"
-                 class="color-box"
-                 :style="{ backgroundColor: variant.variantColor }"
-                 @mouseover="updateProduct(index)">
+                <div v-for="(variant, index) in variants" 
+                     :key="variant.variantId"
+                     class="color-box"
+                     :style="{ backgroundColor: variant.variantColor }"
+                     @mouseover="updateProduct(index)">
+                </div>
+
+                <button 
+                    v-on:click="addToCart"
+                    :disabled="!inStock"
+                    :class="{ disabledButton: !inStock }"
+                >Add to Cart</button>
+                <button 
+                    v-on:click="removeFromCart"
+                    :disabled="!inStock"
+                    :class="{ disabledButton: !inStock }"
+                    >Erase Cart</button>
+
             </div>
 
-            <button 
-                v-on:click="addToCart"
-                :disabled="!inStock"
-                :class="{ disabledButton: !inStock }"
-            >Add to Cart</button>
-            <button 
-                v-on:click="removeFromCart"
-                :disabled="!inStock"
-                :class="{ disabledButton: !inStock }"
-                >Erase Cart</button>
+            <product-tabs :reviews="reviews"></product-tabs>
 
-        </div>
-        <div>
-            <h2>Reviews</h2>
-            <p v-if="!reviews.length">There are no reviews yet.</p>
-            <ul>
-                <li v-for="review in reviews">
-                    <p>{{ review.name }}</p>
-                    <p>{{ review.rating }}</p>
-                    <p>{{ review.review }}</p>
-                    
-                </li>
-            </ul>
-        </div>
 
-        <product-review @review-submitted="addReview"></product-review>
-        
+            
+        </div>
     </div>
 </template>
 
@@ -55,6 +48,8 @@
 
 
 <script>
+
+import { bus } from '../app.js'
 
     export default {
 
@@ -95,17 +90,15 @@
         },
         methods: {
             addToCart(){
-                this.$emit('add-to-cart')
+                bus.$emit('add-to-cart')
             },
             removeFromCart(){
-                this.cart -= 1
+                bus.$emit('remove-from-cart')
             },
             updateProduct(index){
                 this.slectedVariant = index
             },
-            addReview(productReview){
-                this.reviews.push(productReview)
-            }
+            
         },
         computed:{
             title() {
@@ -123,6 +116,11 @@
                 }
                     return 2.99
             }
+        },
+        mounted(){
+            bus.$on('review-submitted', productReview =>{
+                this.reviews.push(productReview)
+            })
         }
     }
 </script>
@@ -176,16 +174,6 @@
   
   .disabledButton {
     background-color: #d8d8d8;
-  }
-
-  .tab {
-    margin-left: 20px;
-    cursor: pointer;
-  }
-
-  .activeTab {
-    color: #16C0B0;
-    text-decoration: underline;
   }
 
   .soldOut{
